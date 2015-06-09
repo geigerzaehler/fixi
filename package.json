@@ -1,0 +1,24 @@
+{
+  "name": "fixi",
+  "version": "0.0.1",
+  "private": true,
+  "main": "src/index.js",
+  "dependencies": {
+    "baconjs": "^0.7.65",
+    "bluebird": "^2.9.27",
+    "dom-delegator": "^13.1.0",
+    "lodash": "^3.9.3",
+    "raf": "^3.0.0",
+    "superagent": "^1.2.0",
+    "vdom-thunk": "^3.0.0",
+    "virtual-dom": "^2.0.1"
+  },
+  "devDependencies": {
+    "express": "^4.12.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Thomas Scholtes",
+  "license": "ISC"
+}
