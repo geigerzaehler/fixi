@@ -3,22 +3,38 @@ import Bluebird from 'bluebird'
 import * as B from 'baconjs'
 import {component, h} from 'fixi'
 import * as L from 'lodash'
+import VText from 'virtual-dom/vnode/vtext'
+
 
 export default function app (render) {
   let label = B.constant('Get Data')
   let $getButton = component(button(label))
-  let fields = requester($getButton.output)
-  .map((items) => L.map(items, 'fields'))
+
+  let entries = requester($getButton.output)
+  .map((e) => L.map(e, 'fields'))
   .toProperty(null)
 
+  let requestedEntries = requester($getButton.output)
+
   let dataView = component((render) => {
-    fields.onValue((items) => {
-      render(h('pre', [JSON.stringify(items, null, 2)]))
+
+    requestedEntries.onValue(() => {
+      render(t('loading...'))
+    })
+
+    entries.onValue((entries) => {
+      if (entries === null)
+        return render(t('No Data!'))
+
+      setTimeout(function () {
+        render(h('pre', [JSON.stringify(entries, null, 2)]))
+      }, 1000)
     })
   })
 
   render(h('div', [
     h('div', [$getButton]),
+    h('hr'),
     dataView
   ]))
 }
@@ -58,4 +74,8 @@ function button (label) {
       click.push(ev)
     }
   }
+}
+
+function t (text) {
+  return new VText(text)
 }
