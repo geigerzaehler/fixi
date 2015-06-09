@@ -18,8 +18,8 @@ export default function app (render) {
   })
 
   render(h('div', [
-    h('div', [$getButton.node]),
-    dataView.node
+    h('div', [$getButton]),
+    dataView
   ]))
 }
 

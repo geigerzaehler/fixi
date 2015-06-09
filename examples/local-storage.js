@@ -18,7 +18,8 @@ export default function app (render) {
     render(h('div', [
       h('div', ['Initial name: ', initialName]),
       h('div', ['Current name: ', n]),
-      h('change it! ', [nameInput.node, $save.node])
+      h('change it! ', [nameInput, $save]),
+      h('div', 'You can hit enter to save your changes')
     ]))
 
     localStorage.setItem('name', n)
@@ -39,7 +40,6 @@ function button (label) {
       click.push(ev)
     }
   }
-
 }
 
 function textInput (initial) {
@@ -57,7 +57,6 @@ function textInput (initial) {
         }
       }
     }))
-    enter.log('ee')
     return {
       value: value.toProperty(initial),
       commited: commit.toProperty(initial),

@@ -10,9 +10,9 @@ import Delegator from 'dom-delegator'
 export function component (c) {
   let loop = createLoop()
 
-  let node = loop.thunk
-  let output = c(update)
-  return { node, output }
+  let thunk = loop.thunk
+  thunk.output = c(update)
+  return thunk
 
   function update (tree) {
     setTimeout(() => {
@@ -23,8 +23,8 @@ export function component (c) {
 
 export var h = vdom.h
 
-export function run (c, document) {
+export function run (c, container) {
   new Delegator(document)
-  let node = component(c).node
-  document.body.appendChild(vdom.create(node));
+  let node = component(c)
+  container.appendChild(vdom.create(node));
 }

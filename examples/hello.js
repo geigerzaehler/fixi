@@ -2,15 +2,16 @@ import {Bus} from 'baconjs'
 import {component, h} from 'fixi'
 
 export default function app (render) {
-  let input = component(textInput);
-  input.output
+  let nameInput = component(textInput);
+  nameInput.output
+  .map((n) => n.toLowerCase().trim() == 'thomas' ? 'Busted!' : n)
   .map(build)
   .onValue(render)
 
   function build (name) {
     return h('div', [
       h('label', 'Name:'),
-      input.node,
+      nameInput,
       h('hr'),
       h('h1', 'Hello ' + name)
     ]);
