@@ -1,12 +1,16 @@
-import {Bus} from 'baconjs'
-import {component, h} from 'fixi'
+import {component, create, h, observe} from 'fixi'
+import {run} from 'examples'
 
-export default function app (render) {
-  let nameInput = component(textInput);
-  nameInput.output
-  .map((n) => n.toLowerCase().trim() == 'thomas' ? 'Busted!' : n)
-  .map(build)
-  .onValue(render)
+run(app())
+
+export function app () {
+  let nameInput = textInput()
+  let name = nameInput.stream
+    .map((ev) => ev.target.value)
+    .toProperty(() => '')
+    .map((n) => n.toLowerCase().trim() === 'thomas' ? 'Busted!' : n)
+
+  return component(name.map(build))
 
   function build (name) {
     return h('div', [
@@ -18,13 +22,6 @@ export default function app (render) {
   }
 }
 
-function textInput (render) {
-  let value = new Bus()
-  render(h('input', {'ev-keydown': push}))
-  return value.toProperty('');
-  function push (ev) {
-    setTimeout(() => {
-      value.push(ev.target.value)
-    })
-  }
+function textInput () {
+  return observe('input', h('input', {type: 'text'}))
 }

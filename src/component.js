@@ -3,7 +3,7 @@ import {create, diff, patch} from 'virtual-dom'
 import VText from 'virtual-dom/vnode/vtext'
 import thunk from 'vdom-thunk'
 
-export default function createLoop (obs) {
+export default function component (obs) {
   let redrawScheduled = false
 
   let currentTree = emptyTree()
