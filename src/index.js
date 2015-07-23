@@ -12,35 +12,54 @@ export var create = vdom.create
 export var h = vdom.h
 
 export function component (obs) {
-  let redrawScheduled = false
+  if (!(typeof obs.onValue === 'function')) {
+    throw new Error('Expected observable')
+  }
 
+  let redrawScheduled = false
   let currentTree = new VText('')
   let newTree = null;
-  let target = create(currentTree)
+  let target = null;
 
-  let widget = {
+  return {
     type: 'Widget',
-    observable: obs,
     init () {
-      obs.onValue(update)
+      on()
+      if (redrawScheduled) {
+        currentTree = newTree
+        redrawScheduled = false
+      }
+      target = create(currentTree)
       return target
     },
     remove () {
-      obs.offValue(update)
+      off()
     }
   }
 
-  return {
-    type: 'Thunk',
-    render (previous) {
-      if (previous && previous.observable === obs)
-        return this.vnode
-      else
-        return widget
+  function off () {
+    obs.offValue(update)
+    obs.offError(throwError)
+    obs.offEnd(endObservable)
+  }
+
+  function on () {
+    if (obs) {
+      obs.onEnd(endObservable)
+      obs.onError(throwError)
+      obs.onValue(update)
     }
+  }
+
+  function endObservable () {
+    obs = null
   }
 
   function update (tree) {
+    if (tree === currentTree) {
+      return
+    }
+
     if (!redrawScheduled) {
       redrawScheduled = true
       raf(redraw)
@@ -55,4 +74,9 @@ export function component (obs) {
     target = patch(target, patches)
     currentTree = newTree
   }
+
+}
+
+function throwError (err) {
+  throw err;
 }

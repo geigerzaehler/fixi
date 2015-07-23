@@ -36,10 +36,14 @@ function app () {
       .map(L.remove)
 
     let sets = entries.flatMapLatest(L.get('updates'))
+    let adds2 = entries
+      .flatMapLatest(L.get('enterLast'))
+      .map(constant(addNewEntry))
+      .map(guard)
 
-    let ops = K.merge([adds, dels, sets])
+    let ops = K.merge([adds, adds2, dels, sets])
 
-    let items = apply(ops, initialItems)
+    let items = apply(ops)(initialItems)
 
     items.onValue((items) => {
       window.localStorage.setItem('items', JSON.stringify(items.toJS()))
@@ -61,10 +65,11 @@ function app () {
 function renderItemList (is) {
   let rendered = is.map(renderItem).toJS()
   let updates = K.merge(rendered.map(L.get('update')))
+  let enterLast = rendered[rendered.length - 1].enter
 
   return extend(
     observe('entry:remove', h('.entries', rendered)),
-    {updates}
+    {updates, enterLast}
   )
 }
 
@@ -72,20 +77,27 @@ function renderItem (name, key) {
   let deleteButton = UI.buttonDelegate('', 'entry:remove', key, ['remove'])
 
   let nameInput = UI.input(name, {placeholder: 'Name', required: true})
-  let update = nameInput.stream.map(L.set(key))
+  nameInput = observe.all({
+    'change': (ev) => ev.target.value,
+    'keydown': null
+  }, nameInput)
+  let update = nameInput.$change.map(L.set(key))
+
+  let enter = nameInput.$keydown
+    .filter((ev) => ev.keyCode === 13)
+    .map(() => null)
 
   let elements = UI.withRightSidebar(nameInput, deleteButton)
 
   return extend(
     h('div', {key}, [elements]),
-    {update}
+    {update, enter}
   )
 }
 
-function apply (ops, val) {
-  return val ? run(val) : run
 
-  function run (val) {
+function apply (ops, val) {
+  return function run (val) {
     return ops.scan((v, op) => op(v), val)
   }
 }

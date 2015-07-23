@@ -1,5 +1,6 @@
 import * as K from 'kefir'
 
+// TODO Check if this works with error
 export default function fix (creator) {
   let stream_
   let stream = K.stream(function (emitter) {
@@ -7,8 +8,12 @@ export default function fix (creator) {
     setImmediate(() => stream_.onAny(listener))
     return () => stream_.offAny(listener)
   })
-  stream_ =  creator(stream)
-  return stream
+  stream_ = creator(stream)
+  if (stream_.getType() === 'property') {
+    return stream.toProperty()
+  } else {
+    return stream
+  }
 }
 
 function setImmediate (fn) {

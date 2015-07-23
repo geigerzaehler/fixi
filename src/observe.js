@@ -8,7 +8,7 @@ import {mapValues, extend, forEach} from 'lodash'
  */
 export default function observe (event, node, trsf) {
   let props = node.properties
-  let hook = new EventStreamHook(trsf)
+  let hook = eventStreamHook(trsf)
   props[event] = hook
   let observed = new VNode(
     node.tagName,
@@ -25,7 +25,7 @@ observe.all = observeAll
 export function observeAll (events, vnode) {
   let props = vnode.properties
   let hooks = mapValues(events, eventStreamHook)
-  extend(props, events)
+  extend(props, hooks)
   let observed = new VNode(
     vnode.tagName,
     props,
@@ -33,8 +33,8 @@ export function observeAll (events, vnode) {
     vnode.key,
     vnode.namespace
   )
-  forEach(hooks, (name, hook) => {
-    observed['$' + name] = hook
+  forEach(hooks, (hook, name) => {
+    observed['$' + name] = hook.stream
   })
   return observed
 
@@ -43,6 +43,7 @@ export function observeAll (events, vnode) {
 function eventStreamHook (trsf) {
   return new EventStreamHook(trsf)
 }
+
 
 class EventStreamHook {
   constructor (trsf) {
