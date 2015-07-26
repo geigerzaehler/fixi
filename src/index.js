@@ -1,4 +1,4 @@
-import raf from'raf'
+import raf from 'raf'
 import VText from 'virtual-dom/vnode/vtext'
 import vdom from 'virtual-dom'
 import {diff, patch} from 'virtual-dom'
@@ -24,7 +24,8 @@ export function component (obs) {
   return {
     type: 'Widget',
     init () {
-      on()
+      if (obs) obs.onAny(dispatch)
+
       if (redrawScheduled) {
         currentTree = newTree
         redrawScheduled = false
@@ -33,26 +34,20 @@ export function component (obs) {
       return target
     },
     remove () {
-      off()
+      if (obs) obs.offAny(dispatch)
     }
   }
 
-  function off () {
-    obs.offValue(update)
-    obs.offError(throwError)
-    obs.offEnd(endObservable)
-  }
-
-  function on () {
-    if (obs) {
-      obs.onEnd(endObservable)
-      obs.onError(throwError)
-      obs.onValue(update)
+  function dispatch (event) {
+    if (event.type === 'value') {
+      update(event.value)
+    } else if (event.type === 'end') {
+      // Don’t know if this is necessary
+      obs.offAny(dispatch)
+      obs = null
+    } else {
+      throw event.value
     }
-  }
-
-  function endObservable () {
-    obs = null
   }
 
   function update (tree) {
@@ -75,8 +70,4 @@ export function component (obs) {
     currentTree = newTree
   }
 
-}
-
-function throwError (err) {
-  throw err;
 }
