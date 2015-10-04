@@ -14,6 +14,14 @@ express()
   './src/index.js': {expose: 'fixi'},
 }]))
 
+.get('/purs.js', browserify([{
+  './output/Main/index.js': {expose: 'Main'}
+}]))
+
+.get('/idris.js', (req, res) => {
+  res.sendFile(path.resolve('dist/idris.js'))
+})
+
 .use('/examples', browserify('./examples', {
   external: ['fixi', 'examples'],
 }))

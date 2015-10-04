@@ -4,6 +4,7 @@ import * as K from 'kefir'
 export default function fix (creator) {
   let stream_
   let stream = K.stream(function (emitter) {
+    // TODO We might need schedule .emitEvent asynchronously
     let listener = (ev) => emitter.emitEvent(ev)
     setImmediate(() => stream_.onAny(listener))
     return () => stream_.offAny(listener)

@@ -37,8 +37,8 @@ export function observeAll (events, vnode) {
     observed['$' + name] = hook.stream
   })
   return observed
-
 }
+
 
 function eventStreamHook (trsf) {
   return new EventStreamHook(trsf)

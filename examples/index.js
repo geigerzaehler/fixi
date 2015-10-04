@@ -5,6 +5,8 @@ export function setup () {
   let links = flatten(map({
     cycle: 'CycleJS',
     hello: 'Hello World',
+    routing: 'Routing',
+    continuation: 'Continuation',
     'simple-list/index': 'Simple List'
   }, exampleLink))
 
