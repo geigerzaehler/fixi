@@ -1,12 +1,13 @@
 import raf from 'raf'
 import VText from 'virtual-dom/vnode/vtext'
-import vdom from 'virtual-dom'
-import {diff, patch} from 'virtual-dom'
-import {extend} from 'lodash-node'
+import vdom, {diff, patch} from 'virtual-dom'
+import extend from 'lodash/object/extend'
 import _thunk from 'vdom-thunk'
+import logger from 'debug'
+import * as K from 'kefir'
+
 import _observe from './observe'
 import _fix from './fix_frp'
-import logger from 'debug'
 
 let log = logger('fixi')
 
@@ -59,8 +60,14 @@ export function component (obs) {
   let newTree = null;
   let target = null;
 
+  let stream = obs.flatMapLatest((node) => {
+    return node.stream || K.never()
+  })
+
   return {
     type: 'Widget',
+    stream: stream,
+
     init () {
       log('init component', obs)
       if (obs) obs.onAny(dispatch)
@@ -111,5 +118,4 @@ export function component (obs) {
     currentTree = newTree
     log('redraw finished', target)
   }
-
 }

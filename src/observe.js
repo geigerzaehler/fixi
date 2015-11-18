@@ -1,6 +1,8 @@
 import {VNode} from 'virtual-dom'
 import {stream} from 'kefir'
-import {mapValues, extend, forEach} from 'lodash'
+import mapValues from 'lodash/object/mapValues'
+import extend from 'lodash/object/extend'
+import forEach from 'lodash/collection/forEach'
 
 
 /**
