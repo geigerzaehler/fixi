@@ -1,5 +1,6 @@
 extends: standard
 rules:
+  generator-star-spacing: [2, {"before": false, "after": true}]
   semi: [0, 'never']
   no-multiple-empty-lines: 0
   comma-dangle: 0

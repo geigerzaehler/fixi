@@ -2,7 +2,7 @@
   "name": "fixi",
   "version": "0.0.1",
   "private": true,
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "dependencies": {
     "debug": "^2.2.0",
     "kefir": "^3.1.0",
@@ -12,6 +12,7 @@
     "virtual-dom": "^2.0.1"
   },
   "devDependencies": {
+    "babel": "^6.1.18",
     "babel-core": "^6.1.21",
     "babel-preset-es2015": "^6.1.18",
     "babelify": "^7.2.0",
@@ -22,26 +23,19 @@
     "express": "^4.13.1",
     "heapdump": "^0.3.7",
     "immutable": "^3.7.4",
+    "jsdom": "^8.1.0",
     "mocha": "^2.3.3",
+    "proxyquire": "^1.7.4",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
-    "superagent": "^1.2.0"
+    "superagent": "^1.2.0",
+    "transducers-js": "^0.4.174"
   },
   "scripts": {
+    "prebulish": "make compile",
     "test": "make test"
   },
   "author": "Thomas Scholtes",
   "license": "ISC",
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "presets": [
-            "es2015"
-          ]
-        }
-      ]
-    ]
-  }
+  "browserify": "./dist/fixi.js"
 }

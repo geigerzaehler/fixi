@@ -1,12 +1,10 @@
-export PATH := ./node_modules/.bin/${PATH}
+export PATH := ./node_modules/.bin/:${PATH}
 export NODE_PATH := ./output
 
 SHELL=/bin/bash -O globstar -c
 
-PSC_MAKE = ./.cabal-sandbox/bin/psc-make
-PSC = ./.cabal-sandbox/bin/psc
 BROWSERIFY = browserify
-BABELIFY = browserify -t [ babelify --presets es2015 ]
+BABELIFY = browserify -t [ babelify ]
 WAIT = inotifywait -r -e create -e modify -q --exclude 'swp$$'
 
 .PHONY: first lib examples purs purs-browserify
@@ -15,30 +13,63 @@ first: idris
 
 .PHONY: serve
 serve:
-	./node_modules/.bin/babel-node serve.js
+	babel-node examples/serve.js
 
 compile: lib examples
 
-lib: dist
+.PHONY: dist
+dist:
+	mkdir -p dist
 	$(BABELIFY) -r ./src/index.js:fixi > dist/fixi.js
+
+.PHONY: lib
+lib:
+	babel \
+		--source-maps \
+		--out-dir lib \
+		src
 
 examples: dist
 	$(BABELIFY) -x fixi -r ./examples:examples > dist/examples.js
-
-dist:
-	mkdir dist
 
 
 #
 # Purescript
 #
+
+PSC = ./.cabal-sandbox/bin/psc
+PSCI = ./.cabal-sandbox/bin/psci
+PSC_BUNDLE = ./.cabal-sandbox/bin/psc-bundle
+
 purs-transpile:
 	${PSC} \
 		'purs/**/*.purs' \
 		-f 'purs/**/*.js' \
 		'bower_components/purescript-*/src/**/*.purs' \
-		-f 'bower_components/purescript-*/src/**/*.js' \
-	  -r ../
+		-f 'bower_components/purescript-*/src/**/*.js'
+
+purs-bundle: purs-transpile
+	$(PSC_BUNDLE) \
+		--main Main \
+		'output/**/*.js' \
+		--output dist/purs-main.js
+
+psci:
+	$(PSCI) \
+		'purs/**/*.purs' \
+		-f 'purs/**/*.js' \
+		'bower_components/purescript-*/src/**/*.purs' \
+		-f 'bower_components/purescript-*/src/**/*.js'
+
+purs-bundle-test: purs-transpile
+	rm -f output/test.js
+	$(PSC_BUNDLE) \
+		--main Test.Main \
+		'output/**/*.js' \
+		--output output/test.js
+
+purs-test: purs-bundle-test
+	node output/test.js
 
 purs: purs-transpile
 	$(BROWSERIFY) -t babelify -r Main -o dist/purs.js
@@ -83,4 +114,5 @@ watch-idris: idris
 test: test-js
 
 test-js:
+	eslint src test
 	mocha

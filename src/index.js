@@ -1,121 +1,30 @@
-import raf from 'raf'
-import VText from 'virtual-dom/vnode/vtext'
-import vdom, {diff, patch} from 'virtual-dom'
-import extend from 'lodash/object/extend'
+import VDom from 'virtual-dom'
 import _thunk from 'vdom-thunk'
-import logger from 'debug'
-import * as K from 'kefir'
 
-import _observe from './observe'
+import _component from './component'
+import * as H from './hooks'
+import * as O from './observe'
 import _fix from './fix_frp'
-
-let log = logger('fixi')
+import attribute from './attribute'
+import _h from './hyperscript'
 
 export var fix = _fix
-export var observe = _observe
+
 export var thunk = _thunk
-export var create = vdom.create
+export var create = VDom.create
+export var component = _component
 
-export function h (...args) {
-  let [tag, props, children, extension] = normalizeArgs(...args)
-  return extend(vdom.h(tag, props, children), extension)
-}
+export var h = _h
 
-function normalizeArgs (...args) {
-  let tag = ''
-  let props = {}
-  let children = []
-  let extension = {}
+export var observe = O.default
+export var ho = O.h
+export var ev = H.eventStream
+export var evi = H.eventStreamInject
+export var del = H.delegate
+export var a = attribute
 
-  let current = args.shift()
-  if (typeof current === 'string') {
-    tag = current
-    current = args.shift()
-  }
-
-  if (!Array.isArray(current)) {
-    props = current
-    current = args.shift()
-  }
-
-  if (current) {
-    children = current
-    current = args.shift()
-  }
-
-  if (current) {
-    extension = current
-  }
-
-  return [tag, props, children, extension]
-}
-
-export function component (obs) {
-  if (!(typeof obs.onValue === 'function')) {
-    throw new Error('Expected observable')
-  }
-
-  let redrawScheduled = false
-  let currentTree = new VText('')
-  let newTree = null;
-  let target = null;
-
-  let stream = obs.flatMapLatest((node) => {
-    return node.stream || K.never()
+export function fixs (fn) {
+  return fix((s) => {
+    return fn(s.flatMapLatest(({stream}) => stream))
   })
-
-  return {
-    type: 'Widget',
-    stream: stream,
-
-    init () {
-      log('init component', obs)
-      if (obs) obs.onAny(dispatch)
-
-      if (redrawScheduled) {
-        currentTree = newTree
-        redrawScheduled = false
-      }
-      target = create(currentTree)
-      return target
-    },
-    remove () {
-      log('remove component')
-      if (obs) obs.offAny(dispatch)
-    }
-  }
-
-  function dispatch (event) {
-    if (event.type === 'value') {
-      update(event.value)
-    } else if (event.type === 'end') {
-      // Don’t know if this is necessary
-      obs.offAny(dispatch)
-      obs = null
-    } else {
-      throw event.value
-    }
-  }
-
-  function update (tree) {
-    if (tree === currentTree) {
-      return
-    }
-
-    if (!redrawScheduled) {
-      redrawScheduled = true
-      raf(redraw)
-    }
-
-    newTree = tree
-  }
-
-  function redraw () {
-    log('redraw start')
-    redrawScheduled = false;
-    let patches = diff(currentTree, newTree)
-    target = patch(target, patches)
-    currentTree = newTree
-    log('redraw finished', target)
-  }
 }

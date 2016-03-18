@@ -1,8 +1,7 @@
-import {component, create, h, observe, fix} from 'fixi'
+import {component, h, observe, fix, ev} from 'fixi'
 import * as K from 'kefir'
-import * as B from 'bluebird'
 import {run} from 'examples'
-import {extend} from 'lodash-node'
+import {extend} from 'lodash'
 
 run(app())
 
@@ -10,7 +9,6 @@ run(app())
 
 export function app () {
   return continuation(makeButton(0))
-
 }
 
 // Number -> VNode { stream :: Stream VNode }
@@ -30,6 +28,7 @@ function makeLoad (count) {
   let info = h('span', [`Loading ${count}`])
   let stream =
     K.constant(makeButton(count))
+    // .changes()
     .delay(500)
   return extend(info, {stream})
 }

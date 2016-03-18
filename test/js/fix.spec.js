@@ -13,7 +13,7 @@ describe('fix()', () => {
     this.clock.restore()
   })
 
-  coit('subscribes to returned stream', function *() {
+  coit('subscribes to returned stream', function* () {
     let subscribe = sinon.stub().returns({})
     let fixed = fix((stream) => K.stream(subscribe))
 
@@ -26,7 +26,7 @@ describe('fix()', () => {
     sinon.assert.calledOnce(subscribe)
   })
 
-  coit('unsubscribes from returned stream', function *() {
+  coit('unsubscribes from returned stream', function* () {
     let unsubscribe = sinon.stub().returns({})
     let fixed = fix((stream) => K.stream(() => unsubscribe))
 
@@ -39,7 +39,7 @@ describe('fix()', () => {
     sinon.assert.called(unsubscribe)
   })
 
-  coit('gets the inital value from the returned stream', function *() {
+  coit('gets the inital value from the returned stream', function* () {
     let fixed = fix(() => K.constant('INITIAL'))
     let onValue = sinon.stub()
     this.clock.tick(1000)
@@ -50,7 +50,7 @@ describe('fix()', () => {
     sinon.assert.calledWith(onValue, 'INITIAL')
   })
 
-  coit('receives values from a property', function *() {
+  coit('receives values from a property', function* () {
     let onValue = sinon.stub()
 
     fix((stream) => {
@@ -64,7 +64,7 @@ describe('fix()', () => {
     sinon.assert.calledWith(onValue, 'INITIAL')
   })
 
-  coit('receives values from a stream', function *() {
+  coit('receives values from a stream', function* () {
     let onValue = sinon.stub()
 
     fix((stream) => {

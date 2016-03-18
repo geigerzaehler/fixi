@@ -9,7 +9,7 @@ global.coit = function coit (desc, fn) {
   it(desc, run)
 }
 
-global.coit.only = function onlyCoit (desc, fn) {
+global.fcoit = function onlyCoit (desc, fn) {
   let run
   if (fn) {
     run = B.coroutine(fn)
@@ -18,4 +18,10 @@ global.coit.only = function onlyCoit (desc, fn) {
   it.only(desc, run)
 }
 
-global.xcoit = global.xit
+global.fit = function fit (...args) {
+  it.only(...args)
+}
+
+global.xcoit = function xcoit (...args) {
+  global.xit(...args)
+}

@@ -1,4 +1,4 @@
-import {component, create, h, observe} from 'fixi'
+import {component, h, observe} from 'fixi'
 import {run} from 'examples'
 
 run(app())
@@ -14,10 +14,10 @@ export function app () {
 
   function build (name) {
     return h('div', [
-      h('label', 'Name:'),
+      h('label', ['Name:']),
       nameInput,
       h('hr'),
-      h('h1', 'Hello ' + name)
+      h('h1', ['Hello ' + name])
     ]);
   }
 }

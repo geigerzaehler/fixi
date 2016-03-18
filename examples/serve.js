@@ -14,20 +14,12 @@ express()
   './src/index.js': {expose: 'fixi'},
 }]))
 
-.get('/purs.js', browserify([{
-  './output/Main/index.js': {expose: 'Main'}
-}]))
-
-.get('/idris.js', (req, res) => {
-  res.sendFile(path.resolve('dist/idris.js'))
-})
-
 .use('/examples', browserify('./examples', {
   external: ['fixi', 'examples'],
 }))
 
 .get('/', (req, res) => {
-  res.sendFile(path.resolve('./index.html'))
+  res.sendFile(path.resolve(__dirname, 'index.html'))
 })
 
 .listen(3000, () => console.log('listening to http://localhost:3000'))
