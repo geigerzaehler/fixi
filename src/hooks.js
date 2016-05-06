@@ -5,6 +5,16 @@ export function eventStream (trsf) {
   return new EventStreamHook(trsf)
 }
 
+/**
+ * @usage
+ * ho('input', {
+ *   input: evi((ev) => ev.target.value)
+ * }).stream.onValue(({type, value}) => {
+ *   if (type === 'input') {
+ *     console.log('input event', value)
+ *   }
+ * })
+ */
 export function eventStreamInject (type, trsf) {
   if (typeof type !== 'string') {
     trsf = type
@@ -22,7 +32,6 @@ export function eventStreamInject (type, trsf) {
 export function delegate (name, makeData, opts) {
   return new DelegateHook(name, makeData, opts)
 }
-
 
 class EventStreamHook {
   constructor (trsf) {
@@ -73,6 +82,31 @@ class EventStreamHook {
   }
 }
 
+
+export function emit (stream) {
+  return new StreamEmitter(stream)
+}
+
+class StreamEmitter {
+  constructor (stream) {
+    this._stream = stream
+  }
+
+  hook (node, name) {
+    this._dispatch = function dispatch (value) {
+      let ev = new Event(name, {bubbles: true})
+      ev.data = value
+      node.dispatchEvent(ev)
+    }
+
+    this._stream.onValue(this._dispatch)
+  }
+
+  unhook (node, name) {
+    this._stream.offValue(this._dispatch)
+  }
+}
+
 class DelegateHook {
   constructor (event, makeData, opts = {}) {
     defaults(opts, {
@@ -97,7 +131,7 @@ class DelegateHook {
 
       /* global Event */
       let ev2 = new Event(event, {bubbles: true})
-      ev2.data = makeData(event)
+      ev2.data = makeData(ev)
       ev.target.dispatchEvent(ev2)
     }
   }

@@ -1,12 +1,13 @@
-import {component, h, ho} from 'fixi'
+import {component, h, evi} from 'fixi'
 import {run} from 'examples'
 
 run(app())
 
 function app () {
-  // input :: VNode {stream :: ClickEvent}
-  let input = ho('input.field', {type: 'text'}, [], {
-    'input': (ev) => ev.target.value
+  // input :: VNode String
+  let input = h('input.field', {
+    type: 'text',
+    input: evi((ev) => ev.target.value)
   })
 
   // name :: Property String

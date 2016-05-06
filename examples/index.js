@@ -7,7 +7,8 @@ export function setup () {
     hello: 'Hello World',
     routing: 'Routing',
     continuation: 'Continuation',
-    'simple-list/index': 'Simple List'
+    'simple-list/index': 'Simple List',
+    'simple-list/events': 'Simple List (event based)'
   }, exampleLink))
 
   let nav = h('div', flatten(['Examples: ', links, h('hr')]))

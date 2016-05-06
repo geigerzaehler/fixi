@@ -1,11 +1,2 @@
 /dist
 /lib
-
-/bin
-/output
-/idris
-/purs
-/bower_components
-/bower.json
-/cabal.sandbox.config
-/.cabal-sandbox/

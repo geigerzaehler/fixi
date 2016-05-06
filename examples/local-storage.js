@@ -2,6 +2,7 @@ import {h} from 'virtual-dom'
 import * as B from 'baconjs'
 import {component} from 'fixi'
 
+let localStorage = window.localstorage
 
 export default function app (render) {
   let initialName = localStorage.getItem('name')
@@ -26,8 +27,6 @@ export default function app (render) {
   })
 }
 
-
-//========================================
 
 function button (label) {
   return function (render) {

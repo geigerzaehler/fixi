@@ -1,14 +1,20 @@
-import {component, h, observe} from 'fixi'
+import {component, h, ev} from 'fixi'
 import {run} from 'examples'
+import * as K from 'kefir'
 
 run(app())
 
 export function app () {
-  let nameInput = textInput()
-  let name = nameInput.stream
+  let nameInput = h('input', {type: 'text', input: ev()})
+  let nameFromInput = nameInput.stream
     .map((ev) => ev.target.value)
-    .toProperty(() => '')
+
+  let clearButton = h('button', {click: ev()}, ['Clear'])
+  let nameFromClear = clearButton.stream.map(() => '')
+
+  let name = K.merge([nameFromInput, nameFromClear])
     .map((n) => n.toLowerCase().trim() === 'thomas' ? 'Busted!' : n)
+    .toProperty(() => '')
 
   return component(name.map(build))
 
@@ -16,12 +22,9 @@ export function app () {
     return h('div', [
       h('label', ['Name:']),
       nameInput,
+      clearButton,
       h('hr'),
       h('h1', ['Hello ' + name])
-    ]);
+    ])
   }
-}
-
-function textInput () {
-  return observe('input', h('input', {type: 'text'}))
 }

@@ -1,8 +1,7 @@
-import {component, create, h, observe, thunk} from 'fixi'
+import {component, h, ev, emit, del, thunk} from 'fixi'
 import {run} from 'examples'
 import * as K from 'kefir'
 import {extend, map, find} from 'lodash'
-import ev from './simple-list/node_event'
 
 run(app())
 
@@ -17,17 +16,18 @@ function app () {
   return navigate(({path, data}) => {
     if (path === '/l' && !data.loaded) {
       let $navigate = K.later(1000, {path: 'l', data: {loaded: true}})
-      return h('div', ['Loading'], {$navigate})
+      return h('div', {
+        navigate: emit($navigate)
+      }, ['Loading'], {$navigate})
+    } else {
+      return h('div', [
+        thunk(nav),
+        thunk(eventButton),
+        h('div', {style: {margin: '1em 0'}}, [`Current path: ${path}`]),
+        h('pre', {style: {margin: '1em 0'}}, [JSON.stringify(data, null, 2)]),
+        route(path)
+      ])
     }
-    let view = route(path)
-    let {$navigate} = view
-    return h('div', [
-      thunk(nav),
-      thunk(eventButton),
-      h('div', {style: {margin: '1em 0'}}, [`Current path: ${path}`]),
-      h('pre', {style: {margin: '1em 0'}}, [JSON.stringify(data, null, 2)]),
-      view
-    ], {$navigate})
   })
 }
 
@@ -35,17 +35,15 @@ function navigate (render) {
   let history = makeHistory()
   let view = history.stream.map(render)
 
-  let viewNavigate = view
-  .flatMapLatest(({$navigate}) => $navigate || K.never())
+  let container = h('div', {
+    navigate: ev((ev) => ev.data)
+  }, [
+    component(view)
+  ])
 
-  let container = observe(
-    'navigate', h('div', [component(view)]), (ev) => ev.data
-  )
+  container.stream.onValue(history.push)
 
-  K.merge([container.stream, viewNavigate])
-  .onValue(history.push)
-
-  return container;
+  return container
 }
 
 function router (routes) {
@@ -57,9 +55,10 @@ function router (routes) {
 }
 
 function showPath ({path}) {
-  let next = observe('click', h('button', ['Next']))
-  let $navigate = next.stream.map(() => ({path: path + '+'}))
-  return h('div', [`Routed ${path} `, next], {$navigate})
+  let click = del('navigate', {path: path + '+'})
+  let next = h('button', {click}, ['Next'])
+
+  return h('div', [`Routed ${path} `, next])
 }
 
 
@@ -92,7 +91,7 @@ function eventButton () {
 
 
 function makeHistory () {
-  let bus = createBus();
+  let bus = createBus()
   let popstate = K.fromEvents(window, 'hashchange', getCurrentState)
   let stream = K.merge([bus.stream, popstate])
               .toProperty(getCurrentState)
@@ -114,18 +113,18 @@ function makeHistory () {
 
 
 function createBus () {
-  var emitter;
+  var emitter
   return {
     push (data) {
       if (emitter) {
-        emitter.emit(data);
+        emitter.emit(data)
       }
     },
 
     stream: K.stream(function (e) {
-      emitter = e;
+      emitter = e
       return function () {
-        emitter = null;
+        emitter = null
       }
     })
   }

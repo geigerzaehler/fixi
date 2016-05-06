@@ -14,69 +14,68 @@ describe('fix()', () => {
   })
 
   coit('subscribes to returned stream', function* () {
-    let subscribe = sinon.stub().returns({})
+    let subscribe = sinon.stub()
     let fixed = fix((stream) => K.stream(subscribe))
 
     sinon.assert.notCalled(subscribe)
-
-    setTimeout(() => fixed, 1000)
-    let cb = () => {}
-    fixed.onValue(cb)
-    this.clock.tick()
+    fixed.onValue()
     sinon.assert.calledOnce(subscribe)
   })
 
   coit('unsubscribes from returned stream', function* () {
-    let unsubscribe = sinon.stub().returns({})
+    let unsubscribe = sinon.stub()
     let fixed = fix((stream) => K.stream(() => unsubscribe))
 
-    sinon.assert.notCalled(unsubscribe)
     let cb = () => {}
     fixed.onValue(cb)
-    this.clock.tick()
     sinon.assert.notCalled(unsubscribe)
     fixed.offValue(cb)
     sinon.assert.called(unsubscribe)
   })
 
-  coit('gets the inital value from the returned stream', function* () {
+  coit('immediately gets the inital value', function* () {
     let fixed = fix(() => K.constant('INITIAL'))
     let onValue = sinon.stub()
-    this.clock.tick(1000)
     fixed.onValue(onValue)
-
-    this.clock.tick(1)
     sinon.assert.calledOnce(onValue)
     sinon.assert.calledWith(onValue, 'INITIAL')
   })
 
-  coit('receives values from a property', function* () {
+  coit('gets the initial value later', function* () {
+    let fixed = fix(() => K.constant('INITIAL'))
+    let onValue = sinon.stub()
+    // Jump to the next tick
+    yield Promise.resolve()
+    fixed.onValue(onValue)
+    yield Promise.resolve()
+    sinon.assert.calledOnce(onValue)
+    sinon.assert.calledWith(onValue, 'INITIAL')
+  })
+
+  it('creates delayed increasing property', function () {
     let onValue = sinon.stub()
 
     fix((stream) => {
-      stream.onValue(onValue)
-      return K.constant('INITIAL')
-    })
+      return stream
+      .delay(10).map((x) => x + 1)
+      .toProperty(() => 0)
+    }).onValue(onValue)
 
-    sinon.assert.notCalled(onValue)
-    this.clock.tick(1)
-    sinon.assert.calledOnce(onValue)
-    sinon.assert.calledWith(onValue, 'INITIAL')
+    sinon.assert.calledWith(onValue, 0)
+    for (let i = 1; i < 10; i++) {
+      this.clock.tick(10)
+      sinon.assert.calledWith(onValue, i)
+    }
   })
 
-  coit('receives values from a stream', function* () {
+  it('constructs undecoupled stream with "skipDuplicates"', function () {
     let onValue = sinon.stub()
 
     fix((stream) => {
-      stream.onValue(onValue)
-      return K.later(100, 'INITIAL')
-    })
-
-    this.clock.tick(100)
-    sinon.assert.notCalled(onValue)
-    this.clock.tick(101)
-    sinon.assert.calledOnce(onValue)
-    sinon.assert.calledWith(onValue, 'INITIAL')
+      return stream
+      .skipDuplicates()
+      .toProperty(() => 0)
+    }).onValue(onValue)
+    sinon.assert.calledWith(onValue, 0)
   })
-
 })

@@ -3,7 +3,7 @@ import {expect} from 'chai'
 
 import * as K from 'kefir'
 import {diff, patch, create, h} from 'virtual-dom'
-import DOM from 'jsdom'
+import {jsdom} from 'jsdom'
 import proxyquire from 'proxyquire'
 
 let component = proxyquire('../../src/component', {
@@ -13,6 +13,11 @@ let component = proxyquire('../../src/component', {
 
 describe('component()', () => {
 
+  // TODO
+  function createDocument () {
+    return jsdom()
+  }
+
   beforeEach(function () {
     component.raf = sinon.stub()
   })
@@ -20,6 +25,7 @@ describe('component()', () => {
   it('subscribes to stream when created', function () {
     let subscribe = sinon.stub()
     let nodes = K.stream(subscribe)
+      .toProperty(() => h('div'))
 
     sinon.assert.notCalled(subscribe)
     create(component(nodes))
@@ -29,6 +35,7 @@ describe('component()', () => {
   it('subscribes to stream when patched into dom', function () {
     let subscribe = sinon.stub()
     let nodes = K.stream(subscribe)
+      .toProperty(() => h('div'))
     let comp = component(nodes)
 
     let prev = h('div')
@@ -42,6 +49,7 @@ describe('component()', () => {
   it('unsubscribes form stream when patched out dom', function () {
     let unsubscribe = sinon.stub()
     let nodes = K.stream(() => unsubscribe)
+      .toProperty(() => h('div'))
     let comp = component(nodes)
     let el = create(comp)
 
@@ -50,23 +58,25 @@ describe('component()', () => {
     sinon.assert.calledOnce(unsubscribe)
   })
 
-  it('renders a text node initially', function () {
-    let nodes = K.constant(h('div'))
+  it('creates initial node immediately', function () {
+    let getInitial = sinon.stub().returns(h('#initial'))
+    let nodes = K.never().toProperty(getInitial)
     let comp = component(nodes)
 
-    let win = DOM.jsdom().defaultView
-    let doc = win.document
+    let doc = createDocument()
+    sinon.assert.notCalled(getInitial)
     let el = create(comp, {document: doc})
-    expect(el.nodeType).to.equal(win.Node.TEXT_NODE)
+    sinon.assert.calledOnce(getInitial)
+    expect(el.id).to.equal('initial')
   })
 
   it('updates node in dom after raf', function () {
-    let win = DOM.jsdom().defaultView
-    let doc = win.document
+    let doc = createDocument()
     let renderOpts = {document: doc}
 
     let emitter
     let nodes = K.stream((e) => { emitter = e })
+      .toProperty(() => h('div'))
     let comp = component(nodes, renderOpts)
     let el = create(comp, renderOpts)
     doc.body.appendChild(el)

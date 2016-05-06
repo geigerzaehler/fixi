@@ -1,27 +1,39 @@
-import * as B from 'bluebird'
+import sinon from 'sinon'
+import {jsdom} from 'jsdom'
+import {create} from 'virtual-dom'
+import proxyquire from 'proxyquire'
 
-global.coit = function coit (desc, fn) {
-  let run
-  if (fn) {
-    run = B.coroutine(fn)
+// export * from '../../src'
+
+export function createDocument (vnode) {
+  let doc = jsdom()
+  let renderOpts = {document: doc}
+
+  if (vnode) {
+    let el = create(vnode, renderOpts)
+    doc.body.appendChild(el)
   }
 
-  it(desc, run)
+  let raf = sinon.stub()
+  let component = proxyquire('../../src/component', {
+    'raf': raf
+  }).default
+
+  return Object.assign(doc, {
+    // component: (nodes) => component(nodes, renderOpts)
+    createCustomEvent (name, detail) {
+      let ev = doc.createEvent('CustomEvent')
+      ev.initCustomEvent(name, true, true, detail)
+      return ev
+    },
+
+    add (vnode) {
+      let el = create(vnode, renderOpts)
+      doc.body.appendChild(el)
+    },
+
+    component: component,
+    raf: raf
+  })
 }
 
-global.fcoit = function onlyCoit (desc, fn) {
-  let run
-  if (fn) {
-    run = B.coroutine(fn)
-  }
-
-  it.only(desc, run)
-}
-
-global.fit = function fit (...args) {
-  it.only(...args)
-}
-
-global.xcoit = function xcoit (...args) {
-  global.xit(...args)
-}

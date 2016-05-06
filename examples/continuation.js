@@ -1,39 +1,40 @@
-import {component, h, observe, fix, ev} from 'fixi'
+import {component, h, fix, ev} from 'fixi'
 import * as K from 'kefir'
 import {run} from 'examples'
-import {extend} from 'lodash'
 
 run(app())
-
-// TODO maybe this should only use streams instead of promises
 
 export function app () {
   return continuation(makeButton(0))
 }
 
-// Number -> VNode { stream :: Stream VNode }
+// Number -> VNode VNode
 function makeButton (count) {
   if (count > 3) {
-    return h('div', ['Limit reached'])
+    let resetButton = makeResetButton()
+    return h('div', [
+      'Limit reached', h('br'),
+      resetButton
+    ], resetButton.stream)
+  } else {
+    let click = ev(() => makeLoad(count + 1))
+    return h('button', {click}, [`clicked ${count} times`])
   }
-  let button = h('button', [`clicked ${count} times`])
-  let observed = observe('click', button, () => {
-    return makeLoad(count + 1)
-  })
-  return observed
 }
 
-// Number -> VNode { stream :: Stream VNode }
+// VNode VNode
+function makeResetButton () {
+  let click = ev(() => makeButton(0))
+  return h('button', {click}, ['Reset'])
+}
+
+// Number -> VNode VNode
 function makeLoad (count) {
-  let info = h('span', [`Loading ${count}`])
-  let stream =
-    K.constant(makeButton(count))
-    // .changes()
-    .delay(500)
-  return extend(info, {stream})
+  let stream = K.later(500, makeButton(count))
+  return h('span', [`Loading ${count}`], stream)
 }
 
-// VNode {stream :: Stream VNode } -> VNode
+// VNode VNode -> VNode ()
 function continuation (a) {
   return component(fix((x) =>
     x.flatMapLatest(({stream}) =>

@@ -1,6 +1,6 @@
 import {extend} from 'lodash'
 import AttributeHook from 'virtual-dom/virtual-hyperscript/hooks/attribute-hook'
-import {ev, h, ho, del} from 'fixi'
+import {ev, h, del} from 'fixi'
 
 export function button (selector, children) {
   if (typeof selector !== 'string') {
@@ -14,7 +14,7 @@ export function button (selector, children) {
     click: ev()
   }
 
-  return ho(tag, props, children)
+  return h(tag, props, children)
 }
 
 
@@ -25,8 +25,14 @@ export function buttonDelegate (selector, event, data, children) {
 }
 
 
-export function input (value, props = {}) {
-  return ho('input.form-control', extend({
+export function input (value, props) {
+  if (typeof value === 'object') {
+    props = value
+    value = undefined
+  }
+  props = props || {}
+
+  return h('input.form-control', extend({
     type: 'text',
     value: value,
     input: ev((e) => e.target.value)

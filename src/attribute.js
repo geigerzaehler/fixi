@@ -8,11 +8,11 @@ class AttributeHook {
   }
 
   hook (node, prop) {
-    node.setAttribute(prop, this._value);
+    node.setAttribute(prop, this._value)
   }
 
   unhook (node, prop) {
-    node.removeAttribute(prop, this._value);
+    node.removeAttribute(prop, this._value)
   }
 }
 

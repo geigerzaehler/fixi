@@ -15,6 +15,12 @@ export function get (key) {
   }
 }
 
+export function inj (type) {
+  return function (value) {
+    return {type, value}
+  }
+}
+
 export function seq (...args) {
   let fns = args.reverse()
   return T.comp(...fns)
@@ -91,9 +97,7 @@ export function push (value) {
 }
 
 export function noop () {
-  return function id (collection) {
-    return collection;
-  }
+  return id
 }
 
 export function remove (i) {
@@ -127,7 +131,18 @@ export function set (key) {
   }
 }
 
-export function modify (key, fn) {
+export function del (index) {
+  return function (collection) {
+    if (collection.delete) {
+      return collection.delete(index)
+    } else {
+      delete collection[index]
+      return collection
+    }
+  }
+}
+
+export function update (key, fn) {
   return function (collection) {
     let value = collection.get
                 ? collection.get(key)

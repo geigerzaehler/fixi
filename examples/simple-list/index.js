@@ -1,4 +1,4 @@
-import {component, a, h, ho, fixs, evi} from 'fixi'
+import {component, a, h, fixs, evi} from 'fixi'
 import {run} from 'examples'
 import K from 'kefir'
 import {List} from 'immutable'
@@ -38,7 +38,7 @@ function app () {
 
     let adds =
       K.merge([addButton.stream, enter])
-      .transduce(addNewEntry);
+      .transduce(addNewEntry)
 
     let ops = K.merge([adds, dels, sets])
 
@@ -51,9 +51,11 @@ function app () {
         return items.map((obj, i) => (obj.last = (i === items.size - 1), obj))
       })
 
-    items.onValue((list) => {
-      let names = list.map(L.get('name'))
-      storeItems(names)
+    setTimeout(() => {
+      items.onValue((list) => {
+        let names = list.map(L.get('name'))
+        storeItems(names)
+      })
     })
 
     return items.map(renderItemList)
@@ -70,13 +72,12 @@ function renderItemList (items) {
   let rendered = items.map(renderItem).toJS()
   let stream = K.merge(rendered.map(L.get('stream')))
 
-  return ho('.entries', {}, rendered, stream)
+  return h('.entries', {}, rendered, stream)
 }
 
 
 function renderItem ({focus, name, last}, key) {
-  // let nameInput = UI.input(name, {placeholder: 'Name', required: true})
-  let nameInput = ho('input.form-control', {
+  let nameInput = h('input.form-control', {
     type: 'text',
     value: name,
     style: {
@@ -99,9 +100,6 @@ function renderItem ({focus, name, last}, key) {
         T.map((name) => ({name})),
         T.map(L.set(key))
       )),
-      L.atTT('blur', T.map((list) => {
-        list.update(key, (x) => (delete x.focus, x))
-      })),
       L.atTT('enter', T.filter((code) => code === 13))
     )
   )
@@ -114,7 +112,7 @@ function renderItem ({focus, name, last}, key) {
   let stream = K.merge([inputUpdates, deleteStream])
 
   let elements = UI.withRightSidebar(nameInput, deleteButton)
-  return ho('div', {key}, [elements], stream)
+  return h('div', {key}, [elements], stream)
 }
 
 

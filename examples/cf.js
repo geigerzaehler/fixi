@@ -31,19 +31,20 @@ export default function app (render) {
 }
 
 
-function responseView (requested, received){
+function responseView (requested, received) {
   return function (render) {
     requested.onValue(() => {
       render(t('loading...'))
     })
 
     received.onValue((entries) => {
-      if (entries === null)
+      if (entries === null) {
         render(t('No Data!'))
-      else
+      } else {
         render(h('pre', serialize(entries)))
+      }
     })
-  };
+  }
 }
 
 function getEntries () {
@@ -79,8 +80,9 @@ function requester (trigger, req) {
 
 
 function button (label) {
-  if (typeof label === 'string')
+  if (typeof label === 'string') {
     label = B.constant(label)
+  }
   return function (render) {
     let click = new B.Bus()
     label.onValue(function (label) {

@@ -1,28 +1,31 @@
-import VDom from 'virtual-dom'
-import _thunk from 'vdom-thunk'
+import thunk from 'vdom-thunk'
+import {create} from 'virtual-dom'
 
-import _component from './component'
-import * as H from './hooks'
-import * as O from './observe'
-import _fix from './fix_frp'
+import fix from './fix_frp'
+import h from './hyperscript'
+import component from './component'
 import attribute from './attribute'
-import _h from './hyperscript'
 
-export var fix = _fix
 
-export var thunk = _thunk
-export var create = VDom.create
-export var component = _component
+export {
+  // Rexports
+  thunk, create,
+  // Main functions
+  fix, h, component,
+  attribute as a
+}
 
-export var h = _h
+// Event attribute hooks
+export {
+  eventStream as ev,
+  eventStreamInject as evi,
+  delegate as del,
+  emit as emit,
+} from './hooks'
 
-export var observe = O.default
-export var ho = O.h
-export var ev = H.eventStream
-export var evi = H.eventStreamInject
-export var del = H.delegate
-export var a = attribute
 
+
+// Stream a -> Stream {stream :: Stream a}
 export function fixs (fn) {
   return fix((s) => {
     return fn(s.flatMapLatest(({stream}) => stream))

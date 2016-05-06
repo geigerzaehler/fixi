@@ -1,21 +1,20 @@
-import raf from 'raf'
-import VText from 'virtual-dom/vnode/vtext'
+import rafDefault from 'raf'
 import {diff, patch, create} from 'virtual-dom'
 import * as K from 'kefir'
 
 import {log} from './utils'
 
-export default function component (obs, renderOpts) {
-  if (typeof obs.onAny !== 'function') {
+export default function component (prop, renderOpts = {}) {
+  if (typeof prop.onAny !== 'function') {
     throw new TypeError('Expected observable')
   }
 
-  let scheduleRedraw = rafScheduler(redraw);
-  let currentTree = new VText('')
-  let newTree = null;
-  let target = null;
+  let scheduleRedraw = rafScheduler(redraw, renderOpts.raf)
+  let currentTree = null
+  let newTree = null
+  let target = null
 
-  let stream = obs.flatMapLatest((node) => {
+  let stream = prop.flatMapLatest((node) => {
     return node.stream || K.never()
   })
 
@@ -24,15 +23,19 @@ export default function component (obs, renderOpts) {
     stream: stream,
 
     init () {
-      log('init component', obs.toString())
-      obs.onAny(dispatch)
-      target = create(currentTree, renderOpts)
+      log('init component', prop.toString())
+      // Since 'prop' is a property this calls dispatch synchronously
+      // and sets 'target'
+      prop.onAny(dispatch)
+      if (!target) {
+        throw new Error('Property did not yield current value')
+      }
       return target
     },
     destroy () {
       log('remove component')
-      if (obs) obs.offAny(dispatch)
-    }
+      if (prop) prop.offAny(dispatch)
+    },
   }
 
   function dispatch (event) {
@@ -40,32 +43,36 @@ export default function component (obs, renderOpts) {
       update(event.value)
     } else if (event.type === 'end') {
       // Don’t know if this is necessary
-      obs.offAny(dispatch)
-      obs = null
+      prop.offAny(dispatch)
+      prop = null
     } else {
       throw event.value
     }
   }
 
   function update (tree) {
-    if (tree !== currentTree) {
+    if (!target) {
+      // First call with initial value
+      currentTree = tree
+      target = create(currentTree, renderOpts)
+      log('create', tree)
+    } else if (tree !== currentTree) {
       newTree = tree
-      scheduleRedraw();
-      log('update')
+      scheduleRedraw()
+      log('update component tree')
     }
   }
 
   function redraw () {
-    log('redraw start')
     let patches = diff(currentTree, newTree)
     target = patch(target, patches)
     currentTree = newTree
-    log('redraw finished', target.outerHTML)
+    log('redraw', target.outerHTML)
   }
 }
 
 
-function rafScheduler (fn) {
+function rafScheduler (fn, raf = rafDefault) {
   let scheduled = false
 
   return function schedule () {
