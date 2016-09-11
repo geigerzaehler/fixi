@@ -1,6 +1,6 @@
 import VDom from 'virtual-dom'
-import extend from 'lodash/object/extend'
-import map from 'lodash/collection/map'
+import extend from 'lodash/extend'
+import map from 'lodash/map'
 import * as K from 'kefir'
 
 export default function h (...args) {
