@@ -1,5 +1,7 @@
 # Fixi
 
+[![Build Status](https://travis-ci.org/geigerzaehler/fixi.svg?branch=master)](https://travis-ci.org/geigerzaehler/fixi)
+
 ## API
 
 ~~~js
