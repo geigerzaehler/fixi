@@ -59,7 +59,7 @@ export function atTT (selected, xf) {
       },
       '@@transducer/result': function (result) {
         return cont['@@transducer/step'](result)
-      }
+      },
     })
 
     return {
@@ -75,7 +75,7 @@ export function atTT (selected, xf) {
       },
       '@@transducer/result': function (result) {
         return t['@@transducer/step'](result)
-      }
+      },
     }
   }
 }

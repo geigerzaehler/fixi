@@ -36,7 +36,7 @@ function app () {
 
 
     let filter = UI.input({
-      tabindex: a(1)
+      tabindex: a(1),
     })
 
     let state = K.combine(
@@ -59,16 +59,16 @@ function app () {
         }
       }),
       remove: ev(({data: key}) => L.remove(key)),
-      'entry:focus': ev(({data: key}) => L.update(key, L.set('focus')(false)))
+      'entry:focus': ev(({data: key}) => L.update(key, L.set('focus')(false))),
     }
 
     return state.map((filtered) => {
       return h('div', events, [
         h('.filter', [
-          'Filter: ', filter
+          'Filter: ', filter,
         ]),
         h('.entries', filtered.map(renderItem).toJS()),
-        UI.buttonDelegate('', 'add', true, ['Add'])
+        UI.buttonDelegate('', 'add', true, ['Add']),
       ])
     })
   }))
@@ -92,7 +92,7 @@ function renderItem ({focus, name, last, key}, index) {
     style: {
       borderStyle: 'solid',
       borderWidth: '1px',
-      borderColor: last ? 'red' : 'blue'
+      borderColor: last ? 'red' : 'blue',
     },
     placeholder: 'Name',
     required: true,
@@ -101,7 +101,7 @@ function renderItem ({focus, name, last, key}, index) {
     focus: del('entry:focus', () => key),
     input: del('update', (ev) => ([key, ev.target.value])),
     // Prevent default to trigger input
-    keydown: del('add', (ev) => ev.keyCode === 13 && last, {preventDefault: false})
+    keydown: del('add', (ev) => ev.keyCode === 13 && last, {preventDefault: false}),
   })
 
   let deleteButton = UI.buttonDelegate('', 'remove', key, ['remove'])
@@ -131,7 +131,7 @@ function storeItems (items) {
 // apply :: Stream (a -> a) -> a -> Property a
 function apply (ops) {
   return function run (val) {
-    return ops.scan((v, op) => (console.log(v), op(v)), val)
+    return ops.scan((v, op) => op(v), val)
   }
 }
 

@@ -24,7 +24,7 @@ export function eventStreamInject (type, trsf) {
   return eventStream((ev) => {
     return {
       type: type || ev.type,
-      value: trsf(ev)
+      value: trsf(ev),
     }
   })
 }

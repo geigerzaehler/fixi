@@ -26,5 +26,6 @@ express()
 })
 
 .listen(3000, () => {
+  /* eslint no-console: off */
   console.log('listening to http://localhost:3000')
 })

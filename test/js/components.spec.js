@@ -24,7 +24,7 @@ describe('component()', () => {
           document: doc,
           raf: raf,
         })
-      }
+      },
     }
   }
 

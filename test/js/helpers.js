@@ -16,7 +16,7 @@ export function createDocument (vnode) {
 
   let raf = sinon.stub()
   let component = proxyquire('../../src/component', {
-    'raf': raf
+    'raf': raf,
   }).default
 
   return Object.assign(doc, {
@@ -33,7 +33,7 @@ export function createDocument (vnode) {
     },
 
     component: component,
-    raf: raf
+    raf: raf,
   })
 }
 

@@ -26,7 +26,7 @@ export default function app (render) {
     ctView,
 
     h('h3', 'Entries'),
-    entriesView
+    entriesView,
   ]))
 }
 

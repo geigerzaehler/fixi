@@ -1,6 +1,12 @@
-extends: standard
+extends:
+  - standard
+  - eslint:recommended
 rules:
-  generator-star-spacing: [2, {"before": false, "after": true}]
-  semi: [2, 'never']
-  no-multiple-empty-lines: 0
-  comma-dangle: 0
+  semi: ['error', 'never']
+  no-multiple-empty-lines: [error, {"max": 3, "maxEOF": 1}]
+  no-trailing-spaces: error
+  comma-dangle: ['error', 'always-multiline']
+  no-var: error
+  generator-star-spacing: ['error', {before: false, after: true}]
+  yield-star-spacing: ['error', {before: false, after: true}]
+  require-yield: off

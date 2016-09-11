@@ -14,7 +14,7 @@ function makeButton (count) {
     let resetButton = makeResetButton()
     return h('div', [
       'Limit reached', h('br'),
-      resetButton
+      resetButton,
     ], resetButton.stream)
   } else {
     let click = ev(() => makeLoad(count + 1))

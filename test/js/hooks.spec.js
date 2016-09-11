@@ -8,7 +8,7 @@ describe('hooks', function () {
   describe('#evi', function () {
     it('adds stream with DOM events', function () {
       let node = h('input#input', {
-        input: evi('TYPE', (ev) => ev.detail.value)
+        input: evi('TYPE', (ev) => ev.detail.value),
       })
       let onValue = sinon.stub()
       node.stream.onValue(onValue)
@@ -27,7 +27,7 @@ describe('hooks', function () {
   describe('#ev', function () {
     it('adds stream with DOM events', function () {
       let node = h('input#input', {
-        input: ev((ev) => ev.detail.value)
+        input: ev((ev) => ev.detail.value),
       })
       let onValue = sinon.stub()
       node.stream.onValue(onValue)

@@ -8,16 +8,16 @@ run(app())
 function app () {
   let route = router([{
     path: '/a',
-    render: showPath
+    render: showPath,
   }, {
     path: '/b',
-    render: showPath
+    render: showPath,
   }])
   return navigate(({path, data}) => {
     if (path === '/l' && !data.loaded) {
       let $navigate = K.later(1000, {path: 'l', data: {loaded: true}})
       return h('div', {
-        navigate: emit($navigate)
+        navigate: emit($navigate),
       }, ['Loading'], {$navigate})
     } else {
       return h('div', [
@@ -25,7 +25,7 @@ function app () {
         thunk(eventButton),
         h('div', {style: {margin: '1em 0'}}, [`Current path: ${path}`]),
         h('pre', {style: {margin: '1em 0'}}, [JSON.stringify(data, null, 2)]),
-        route(path)
+        route(path),
       ])
     }
   })
@@ -36,9 +36,9 @@ function navigate (render) {
   let view = history.stream.map(render)
 
   let container = h('div', {
-    navigate: ev((ev) => ev.data)
+    navigate: ev((ev) => ev.data),
   }, [
-    component(view)
+    component(view),
   ])
 
   container.stream.onValue(history.push)
@@ -71,9 +71,9 @@ function nav () {
       ' ',
       h('a', {
         href: '#/',
-        click: ev('navigate', {path: '/', data: {loaded: false}})
-      }, ['(reset)'])
-    ])
+        click: ev('navigate', {path: '/', data: {loaded: false}}),
+      }, ['(reset)']),
+    ]),
   ])
 }
 
@@ -85,7 +85,7 @@ function ul (children) {
 
 function eventButton () {
   return h('button', {
-    click: ev('navigate', {path: '/c'})
+    click: ev('navigate', {path: '/c'}),
   }, ['Go to /c'])
 }
 
@@ -102,7 +102,7 @@ function makeHistory () {
       data = extend(stateData, data)
       bus.push({path, data})
       window.location.hash = path
-    }
+    },
   }
 
   function getCurrentState () {
@@ -113,7 +113,7 @@ function makeHistory () {
 
 
 function createBus () {
-  var emitter
+  let emitter
   return {
     push (data) {
       if (emitter) {
@@ -126,6 +126,6 @@ function createBus () {
       return function () {
         emitter = null
       }
-    })
+    }),
   }
 }

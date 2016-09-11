@@ -63,7 +63,7 @@ function app () {
 
   return h('div', [
     component(entries),
-    addButton
+    addButton,
   ])
 }
 
@@ -83,7 +83,7 @@ function renderItem ({focus, name, last}, key) {
     style: {
       borderStyle: 'solid',
       borderWidth: '1px',
-      borderColor: last ? 'red' : 'blue'
+      borderColor: last ? 'red' : 'blue',
     },
     placeholder: 'Name',
     required: true,
@@ -91,7 +91,7 @@ function renderItem ({focus, name, last}, key) {
     hasFocus: focus && focusHook(),
     blur: evi('update', (ev) => ev.target.value),
     input: evi('update', (ev) => ev.target.value),
-    keydown: evi('enter', (ev) => ev.keyCode)
+    keydown: evi('enter', (ev) => ev.keyCode),
   })
 
   let inputUpdates = nameInput.stream.transduce(

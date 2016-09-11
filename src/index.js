@@ -12,7 +12,7 @@ export {
   thunk, create,
   // Main functions
   fix, h, component,
-  attribute as a
+  attribute as a,
 }
 
 // Event attribute hooks

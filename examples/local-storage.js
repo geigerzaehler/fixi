@@ -20,7 +20,7 @@ export default function app (render) {
       h('div', ['Initial name: ', initialName]),
       h('div', ['Current name: ', n]),
       h('change it! ', [nameInput, $save]),
-      h('div', 'You can hit enter to save your changes')
+      h('div', 'You can hit enter to save your changes'),
     ]))
 
     localStorage.setItem('name', n)
@@ -54,12 +54,12 @@ function textInput (initial) {
         if (ev.keyCode === 13) {
           enter.push(null)
         }
-      }
+      },
     }))
     return {
       value: value.toProperty(initial),
       commited: commit.toProperty(initial),
-      enter: enter
+      enter: enter,
     }
     function valuePush (bus) {
       return function (event) {

@@ -24,10 +24,10 @@ export default function component (make, renderOpts = {}) {
       destroy () {
         log('remove component')
         if (destroy) {
-          destroy();
+          destroy()
         }
         scheduler.cancel()
-      }
+      },
     }
 
     function update (tree) {
@@ -54,7 +54,7 @@ export default function component (make, renderOpts = {}) {
 
 
 function createWidget (init) {
-  let destroy_ = null;
+  let destroy_ = null
   return {
     type: 'Widget',
     init () {
@@ -64,14 +64,14 @@ function createWidget (init) {
     },
     destroy () {
       if (destroy_) destroy_()
-    }
+    },
   }
 }
 
 
 function rafScheduler (fn, raf = rafDefault) {
   let scheduled = false
-  let canceled = false;
+  let canceled = false
 
   return {schedule, cancel}
 

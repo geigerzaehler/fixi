@@ -11,7 +11,7 @@ export function button (selector, children) {
   let tag = 'button.btn' + selector
   let props = {
     type: 'button',
-    click: ev()
+    click: ev(),
   }
 
   return h(tag, props, children)
@@ -35,14 +35,14 @@ export function input (value, props) {
   return h('input.form-control', extend({
     type: 'text',
     value: value,
-    input: ev((e) => e.target.value)
+    input: ev((e) => e.target.value),
   }, props))
 }
 
 export function textarea (props = {}) {
   return h('textarea.form-control', extend({
     type: 'text',
-    input: ev((e) => e.target.value)
+    input: ev((e) => e.target.value),
   }, props))
 }
 
@@ -67,19 +67,19 @@ export function dialog (id, title, content) {
       h('.modal-content', [
         h('.modal-header', [
           closeButton,
-          h('h4.modal-title', [title])
+          h('h4.modal-title', [title]),
         ]),
         h('.modal-body', content),
-        h('.modal-footer')
-      ])
-    ])
+        h('.modal-footer'),
+      ]),
+    ]),
   ])
 }
 
-var closeButton = h('button.close', {
+let closeButton = h('button.close', {
   'type': 'button',
   'data-dismiss': a('modal'),
-  'aria-hidden': a(true)
+  'aria-hidden': a(true),
 }, ['\u00D7'])
 
 export function a (v, ns) {

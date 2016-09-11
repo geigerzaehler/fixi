@@ -7,7 +7,7 @@ function app () {
   // input :: VNode String
   let input = h('input.field', {
     type: 'text',
-    input: evi((ev) => ev.target.value)
+    input: evi((ev) => ev.target.value),
   })
 
   // name :: Property String
@@ -22,7 +22,7 @@ function app () {
       h('label.label', ['Name:']),
       input,
       h('hr'),
-      h('h1.header', [`Hello ${name}`])
+      h('h1.header', [`Hello ${name}`]),
     ])
   })
 

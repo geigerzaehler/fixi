@@ -24,7 +24,7 @@ export function app () {
       nameInput,
       clearButton,
       h('hr'),
-      h('h1', ['Hello ' + name])
+      h('h1', ['Hello ' + name]),
     ])
   }
 }
