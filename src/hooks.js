@@ -1,6 +1,14 @@
 import {stream} from 'kefir'
 import {constant, defaults} from 'lodash'
 
+/**
+ * @usage
+ * ho('button', {
+ *   click: ev()
+ * }).stream.onValue((event) => {
+ *   event.preventDefault();
+ * })
+ */
 export function eventStream (trsf) {
   return new EventStreamHook(trsf)
 }
