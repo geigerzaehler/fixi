@@ -1,3 +1,0 @@
-test/js/**/*.spec.js
---require test/js/boot.js
---compilers js:babel-core/register

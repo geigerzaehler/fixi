@@ -4,36 +4,36 @@ BABELIFY = browserify --transform [ babelify ]
 
 .PHONY: examples lib dist test
 
-first: compile
-
-serve:
-	babel-node examples/serve.js
-
-compile: lib examples
+first: lib
 
 dist:
+	rm -rf dist
+	mkdir dist
 	$(BABELIFY) \
 		--require ./src/index.js:fixi \
-		--outfile dist/fixi.js
+		--debug \
+		| exorcist dist/fixi.js.map \
+		> dist/fixi.js
 
 lib:
+	rm -rf lib
 	babel \
 		--source-maps \
 		--out-dir lib \
 		src
 
-examples: dist
-	$(BABELIFY) \
-		--external fixi \
-		--require ./examples:examples \
-		--outfile dist/examples.js
+.PHONY: package
+package: lib dist
+	rm -rf package
+	mkdir package
+	cp -a README.md package.json lib/* dist package
 
-test: lint test-js
+test: test-js lint
 
 test-js:
-	mocha --reporter dot
+	kanu --require test/support/boot.js test
 
 lint:
 	eslint \
 		--format unix \
-		examples src test
+		src test

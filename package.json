@@ -1,6 +1,6 @@
 {
   "name": "fixi",
-  "version": "0.0.2",
+  "version": "0.2.0-alpha.2",
   "author": "Thomas Scholtes",
   "license": "ISC",
   "main": "lib/index.js",
@@ -10,37 +10,49 @@
     "start": "make serve"
   },
   "dependencies": {
-    "debug": "^2.2.0",
     "kefir": "^3.1.0",
+    "kefir-extra": "^0.5.0",
     "lodash": "^4.15.0",
+    "preact": "~7",
     "raf": "^3.1.0",
-    "vdom-thunk": "^3.0.0",
+    "shallow-equals": "^0.0.0",
+    "sum-types": "^0.9.4",
     "virtual-dom": "^2.0.1"
   },
   "devDependencies": {
+    "babel": "^6.5.2",
     "babel-cli": "^6.14.0",
     "babel-core": "^6.1.21",
+    "babel-plugin-module-resolver": "^2.2.0",
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-preset-es2015": "^6.1.18",
+    "babel-preset-es2015-node6": "^0.4.0",
+    "babel-register": "^6.16.3",
     "babel-runtime": "^6.11.6",
-    "babelify": "^7.2.0",
+    "babelify": "^7.3.0",
     "bluebird": "^3.4.6",
-    "browserify": "^13.1.0",
-    "browserify-middleware": "^7.0.0",
-    "chai": "^3.4.1",
-    "dirty-chai": "^1.2.2",
+    "browserify": "^13.3.0",
+    "chai": "^3.5.0",
+    "chokidar": "^1.6.0",
+    "co": "^4.6.0",
     "eslint": "^3.5.0",
     "eslint-config-standard": "^6.0.0",
-    "eslint-plugin-promise": "^2.0.1",
+    "eslint-plugin-promise": "^3.3.1",
     "eslint-plugin-standard": "^2.0.0",
+    "exorcist": "^0.4.0",
     "express": "^4.13.1",
-    "immutable": "^3.7.4",
+    "immutable": "^3.8.1",
     "jsdom": "^9.5.0",
-    "mocha": "^3.0.2",
-    "proxyquire": "^1.7.4",
+    "jspm": "beta",
+    "kanu": "^0.0.1",
+    "resolve": "^1.1.7",
     "sinon": "^1.17.2",
-    "sinon-chai": "^2.8.0",
-    "superagent": "^2.2.0",
+    "snabbdom": "~0.6",
     "transducers-js": "^0.4.174"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
   }
 }

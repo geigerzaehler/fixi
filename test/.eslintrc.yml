@@ -1,0 +1,14 @@
+env:
+  node: true
+globals:
+  describe: false
+  describeEach: false
+  beforeEach: false
+  afterEach: false
+  subject: false
+  subjects: false
+  setup: false
+  it: false
+  test: false
+rules:
+  padded-blocks: 0

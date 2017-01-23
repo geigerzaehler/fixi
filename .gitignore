@@ -1,2 +1,8 @@
 /dist
 /lib
+/package
+jspm_packages
+/vendor
+npm-debug.log
+/examples
+/purescript-fixi
